@@ -3,10 +3,13 @@ package org.usfirst.frc.team5507.robot;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import org.usfirst.frc.team5507.robot.subsystems.Climber;
+import org.usfirst.frc.team5507.robot.subsystems.HatchDelivery;
 //import org.usfirst.frc.team5507.robot.subsystems.SwerveDriveModule;
 import org.usfirst.frc.team5507.robot.subsystems.SwerveDriveSubsystem;
 
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -23,6 +26,9 @@ public class Robot extends TimedRobot {
 
 	private static OI mOI;
 	private static SwerveDriveSubsystem swerveDriveSubsystem;
+	private Timer timer; 
+	public static Climber m_climber;
+	public static HatchDelivery m_HatchDelivery;
 
 	public static OI getOI() {
 		return mOI;
@@ -40,7 +46,7 @@ public class Robot extends TimedRobot {
 
 		mOI.registerControls();
 
-		
+		timer = new Timer();
 	}
 
 	@Override
@@ -54,7 +60,7 @@ public class Robot extends TimedRobot {
 		for (int i = 0; i < 4; i++) {
 			SmartDashboard.putNumber("Drive Current Draw " + i, swerveDriveSubsystem.getSwerveModule(i).getDriveMotor().getOutputCurrent());
 			SmartDashboard.putNumber("Angle Current Draw " + i, swerveDriveSubsystem.getSwerveModule(i).getAngleMotor().getOutputCurrent());
-			System.out.println("Module " + i  + ": " + swerveDriveSubsystem.getSwerveModule(i).getCurrentAngle());
+			//System.out.println("Module " + i  + ": " + swerveDriveSubsystem.getSwerveModule(i).getCurrentAngle());
 		}
 		//System.out.println("Module 2: " + swerveDriveSubsystem.getSwerveModule(0).getCurrentAngle());
 		
@@ -114,15 +120,30 @@ public class Robot extends TimedRobot {
 		Scheduler.getInstance().run();
 	}
 
+	@Override
+	public void testInit() {
+		timer.reset();
+		timer.start();
+	}
 	/**
 	 * This function is called periodically during test mode
 	 */
 	@Override
 	public void testPeriodic() {
 		LiveWindow.run();
-		
-		System.out.println("Module 0 = " + swerveDriveSubsystem.getSwerveModule(0).getAngleMotor().getSelectedSensorPosition(RobotMap.kPIDLoopIdx));
-		System.out.println("Module 3 = " + swerveDriveSubsystem.getSwerveModule(3).getAngleMotor().getSelectedSensorPosition(RobotMap.kPIDLoopIdx));
+		if(timer.get() < 5) {
+			swerveDriveSubsystem.holonomicDrive(0.3, 0 , 0);
+		}
+		else if(timer.get() <10) {
+			swerveDriveSubsystem.holonomicDrive(0.3, 0, .5); //.25 and .5 are too small
+			
+		}
+		else {
+			swerveDriveSubsystem.stopDriveMotors();
+			timer.stop();
+		}
+		/*System.out.println("Module 0 = " + swerveDriveSubsystem.getSwerveModule(0).getAngleMotor().getSelectedSensorPosition(RobotMap.kPIDLoopIdx));
+		System.out.println("Module 3 = " + swerveDriveSubsystem.getSwerveModule(3).getAngleMotor().getSelectedSensorPosition(RobotMap.kPIDLoopIdx));*/
 	}
 
 	public SwerveDriveSubsystem getDrivetrain() {
