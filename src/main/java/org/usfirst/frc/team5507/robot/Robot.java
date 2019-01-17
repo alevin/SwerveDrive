@@ -5,6 +5,7 @@ import com.kauailabs.navx.frc.AHRS;
 
 import org.usfirst.frc.team5507.robot.subsystems.Climber;
 import org.usfirst.frc.team5507.robot.subsystems.HatchDelivery;
+import org.usfirst.frc.team5507.robot.subsystems.SwerveDriveModule;
 //import org.usfirst.frc.team5507.robot.subsystems.SwerveDriveModule;
 import org.usfirst.frc.team5507.robot.subsystems.SwerveDriveSubsystem;
 
@@ -62,7 +63,7 @@ public class Robot extends TimedRobot {
 			SmartDashboard.putNumber("Angle Current Draw " + i, swerveDriveSubsystem.getSwerveModule(i).getAngleMotor().getOutputCurrent());
 			//System.out.println("Module " + i  + ": " + swerveDriveSubsystem.getSwerveModule(i).getCurrentAngle());
 		}
-		//System.out.println("Module 2: " + swerveDriveSubsystem.getSwerveModule(0).getCurrentAngle());
+		System.out.println("Module 2: " + swerveDriveSubsystem.getSwerveModule(2).getCurrentAngle());
 		
 		
 	}
@@ -131,12 +132,9 @@ public class Robot extends TimedRobot {
 	@Override
 	public void testPeriodic() {
 		LiveWindow.run();
-		if(timer.get() < 5) {
-			swerveDriveSubsystem.holonomicDrive(0.3, 0 , 0);
-		}
-		else if(timer.get() <10) {
-			swerveDriveSubsystem.holonomicDrive(0.3, 0, .5); //.25 and .5 are too small
-			
+		if(timer.get() < 10) {
+			swerveDriveSubsystem.holonomicDrive(0.8, 0 , 0);
+			System.out.println("Target: "+swerveDriveSubsystem.getSwerveModule(2).getTargetAngle());
 		}
 		else {
 			swerveDriveSubsystem.stopDriveMotors();

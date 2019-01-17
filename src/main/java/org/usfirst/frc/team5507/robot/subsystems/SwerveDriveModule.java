@@ -33,8 +33,8 @@ public class SwerveDriveModule extends Subsystem {
 		mDriveMotor = driveMotor;
 
 		mZeroOffset = zeroOffset;
-	       angleMotor.configSelectedFeedbackSensor(FeedbackDevice.Analog, 0, 0);
-	        angleMotor.setSensorPhase(true);
+           angleMotor.configSelectedFeedbackSensor(FeedbackDevice.Analog, 0, 0);
+            angleMotor.setSensorPhase(true);
 	        angleMotor.config_kP(0, 30, 0);
 	        angleMotor.config_kI(0, 0.001, 0);
 	        angleMotor.config_kD(0, 200, 0);
