@@ -63,8 +63,7 @@ public class Robot extends TimedRobot {
 			SmartDashboard.putNumber("Angle Current Draw " + i, swerveDriveSubsystem.getSwerveModule(i).getAngleMotor().getOutputCurrent());
 			//System.out.println("Module " + i  + ": " + swerveDriveSubsystem.getSwerveModule(i).getCurrentAngle());
 		}
-		//System.out.println("Module 2: " + swerveDriveSubsystem.getSwerveModule(2).getCurrentAngle());
-		
+	System.out.println("Module 2: " + swerveDriveSubsystem.getSwerveModule(2).getAngleMotor().getOutputCurrent());
 		
 	}
 
@@ -132,14 +131,15 @@ public class Robot extends TimedRobot {
 	@Override
 	public void testPeriodic() {
 		LiveWindow.run();
-		if(timer.get() < 10) {
-			swerveDriveSubsystem.holonomicDrive(0.8, 0 , 0);
-			System.out.println("Target: "+swerveDriveSubsystem.getSwerveModule(0).getTargetAngle());
-		}
+		if(timer.get() < 2) swerveDriveSubsystem.holonomicDrive(0, -0.3 , 0);
+		else if(timer.get() < 3) swerveDriveSubsystem.holonomicDrive(0.3, 0, 0);
+		else if(timer.get() < 5) swerveDriveSubsystem.holonomicDrive(0, 0.3, 0);
+		else if(timer.get() < 6) swerveDriveSubsystem.holonomicDrive(-0.3, 0, 0);
 		else {
 			swerveDriveSubsystem.stopDriveMotors();
 			timer.stop();
 		}
+
 		/*System.out.println("Module 0 = " + swerveDriveSubsystem.getSwerveModule(0).getAngleMotor().getSelectedSensorPosition(RobotMap.kPIDLoopIdx));
 		System.out.println("Module 3 = " + swerveDriveSubsystem.getSwerveModule(3).getAngleMotor().getSelectedSensorPosition(RobotMap.kPIDLoopIdx));*/
 	}
