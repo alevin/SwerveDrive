@@ -63,7 +63,7 @@ public class Robot extends TimedRobot {
 			SmartDashboard.putNumber("Angle Current Draw " + i, swerveDriveSubsystem.getSwerveModule(i).getAngleMotor().getOutputCurrent());
 			//System.out.println("Module " + i  + ": " + swerveDriveSubsystem.getSwerveModule(i).getCurrentAngle());
 		}
-		System.out.println("Module 2: " + swerveDriveSubsystem.getSwerveModule(2).getCurrentAngle());
+		//System.out.println("Module 2: " + swerveDriveSubsystem.getSwerveModule(2).getCurrentAngle());
 		
 		
 	}
@@ -134,7 +134,7 @@ public class Robot extends TimedRobot {
 		LiveWindow.run();
 		if(timer.get() < 10) {
 			swerveDriveSubsystem.holonomicDrive(0.8, 0 , 0);
-			System.out.println("Target: "+swerveDriveSubsystem.getSwerveModule(2).getTargetAngle());
+			System.out.println("Target: "+swerveDriveSubsystem.getSwerveModule(0).getTargetAngle());
 		}
 		else {
 			swerveDriveSubsystem.stopDriveMotors();
