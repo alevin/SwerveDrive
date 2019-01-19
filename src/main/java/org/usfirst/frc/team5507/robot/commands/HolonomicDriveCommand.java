@@ -17,7 +17,6 @@ public class HolonomicDriveCommand extends Command {
 
 	private double deadband(double input) {
 		if (Math.abs(input) < 0.15) return 0;
-		System.out.println(input);
 		return input;
 	}
 

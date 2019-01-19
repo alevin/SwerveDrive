@@ -63,7 +63,7 @@ public class Robot extends TimedRobot {
 			SmartDashboard.putNumber("Angle Current Draw " + i, swerveDriveSubsystem.getSwerveModule(i).getAngleMotor().getOutputCurrent());
 			//System.out.println("Module " + i  + ": " + swerveDriveSubsystem.getSwerveModule(i).getCurrentAngle());
 		}
-	System.out.println("Module 2: " + swerveDriveSubsystem.getSwerveModule(2).getAngleMotor().getOutputCurrent());
+
 		
 	}
 
@@ -118,6 +118,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
+		System.out.println(swerveDriveSubsystem.getSwerveModule(0).getInches());
 	}
 
 	@Override

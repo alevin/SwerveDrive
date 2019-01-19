@@ -39,6 +39,7 @@ public class SwerveDriveSubsystem extends HolonomicDrivetrain {
 		mSwerveModules[1].getAngleMotor().setInverted(true);
 		mSwerveModules[3].getAngleMotor().setInverted(true);
 
+		mSwerveModules[0].zeroDistance();
 	}
 
 	public AHRS getNavX() {
@@ -63,9 +64,9 @@ public class SwerveDriveSubsystem extends HolonomicDrivetrain {
 
 	@Override
 	public void holonomicDrive(double forward, double strafe, double rotation) {
-		System.out.println("Forward: " + forward);
-		System.out.println("Strafe: " + strafe);
-		System.out.println("Rotation: " + rotation);
+		// System.out.println("Forward: " + forward);
+		// System.out.println("Strafe: " + strafe);
+		// System.out.println("Rotation: " + rotation);
 		forward *= getSpeedMultiplier();
 		strafe *= getSpeedMultiplier();
 		if (isFieldOriented()) {
