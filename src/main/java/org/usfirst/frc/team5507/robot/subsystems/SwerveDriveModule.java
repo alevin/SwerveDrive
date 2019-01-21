@@ -40,18 +40,18 @@ public class SwerveDriveModule extends Subsystem {
             angleMotor.set(ControlMode.Position, 0);
             angleMotor.configNeutralDeadband(0.07);
 
-//	        driveMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
-//
-//	        driveMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, 0);
-//	        driveMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 0);
-//
-//	        driveMotor.config_kP(0, 15, 0);
-//	        driveMotor.config_kI(0, 0.01, 0);
-//	        driveMotor.config_kD(0, 0.1, 0);
-//	        driveMotor.config_kF(0, 0.2, 0);
-//
-//	        driveMotor.configMotionCruiseVelocity(640, 0);
-//	        driveMotor.configMotionAcceleration(200, 0);
+            driveMotor.configSelectedFeedbackSensor(FeedbackDevice.CTRE_MagEncoder_Relative, 0, 0);
+
+	        // driveMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_13_Base_PIDF0, 10, 0);
+	        // driveMotor.setStatusFramePeriod(StatusFrameEnhanced.Status_10_MotionMagic, 10, 0);
+
+	        // driveMotor.config_kP(0, 15, 0);
+	        // driveMotor.config_kI(0, 0.01, 0);
+	        // driveMotor.config_kD(0, 0.1, 0);
+	        // driveMotor.config_kF(0, 0.2, 0);
+
+	        // driveMotor.configMotionCruiseVelocity(640, 0);
+	        // driveMotor.configMotionAcceleration(200, 0);
 
 	        driveMotor.setNeutralMode(NeutralMode.Brake);
 
@@ -175,5 +175,23 @@ public class SwerveDriveModule extends Subsystem {
     }
     public double getTargetAngle() {
     	return mLastTargetAngle;
+    }
+
+    public double encoderTicksToInches(double ticks) {
+         return ticks / 35.6;
+    }
+
+    public int inchesToEncoderTicks(double inches) {
+         return (int) Math.round(inches * 35.6);
+    }
+
+    public double getInches() {
+        return encoderTicksToInches(mDriveMotor.getSelectedSensorPosition(0));
+    }
+
+    public double getDriveDistance() { 
+        int ticks = mDriveMotor.getSelectedSensorPosition(0);
+
+        return encoderTicksToInches(ticks);
     }
 }
