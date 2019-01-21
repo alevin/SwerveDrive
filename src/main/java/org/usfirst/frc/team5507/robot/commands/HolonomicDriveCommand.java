@@ -22,9 +22,9 @@ public class HolonomicDriveCommand extends Command {
 
 	@Override
 	protected void execute() {
-		double forward = Robot.getOI().getController().getLeftYValue();
-		double rotation = -Robot.getOI().getController().getRightXValue() * 0.5;
-		double strafe =  Robot.getOI().getController().getLeftXValue(); 
+		double forward = -Robot.getOI().getController().getLeftYValue();
+		double rotation = Robot.getOI().getController().getRightXValue() * 0.5;
+		double strafe =  -Robot.getOI().getController().getLeftXValue(); 
 
 		if (Robot.getOI().getController().getLeftBumperButton().get()) {
 			rotation = -1;

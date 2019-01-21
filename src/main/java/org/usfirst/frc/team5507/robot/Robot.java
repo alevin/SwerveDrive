@@ -118,7 +118,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
-		System.out.println(swerveDriveSubsystem.getSwerveModule(0).getInches());
+		System.out.println(swerveDriveSubsystem.getSwerveModule(2).getInches());
 	}
 
 	@Override
@@ -132,15 +132,9 @@ public class Robot extends TimedRobot {
 	@Override
 	public void testPeriodic() {
 		LiveWindow.run();
-		if(timer.get() < 2) swerveDriveSubsystem.holonomicDrive(0, -0.3 , 0);
-		else if(timer.get() < 3) swerveDriveSubsystem.holonomicDrive(0.3, 0, 0);
-		else if(timer.get() < 5) swerveDriveSubsystem.holonomicDrive(0, 0.3, 0);
-		else if(timer.get() < 6) swerveDriveSubsystem.holonomicDrive(-0.3, 0, 0);
-		else {
-			swerveDriveSubsystem.stopDriveMotors();
-			timer.stop();
-		}
-
+		System.out.println(swerveDriveSubsystem.getSwerveModule(2).getInches());
+		if(Math.abs(swerveDriveSubsystem.getSwerveModule(2).getInches()) < 80) swerveDriveSubsystem.holonomicDrive(-0.3, 0, 0);
+		else swerveDriveSubsystem.stopDriveMotors();
 		/*System.out.println("Module 0 = " + swerveDriveSubsystem.getSwerveModule(0).getAngleMotor().getSelectedSensorPosition(RobotMap.kPIDLoopIdx));
 		System.out.println("Module 3 = " + swerveDriveSubsystem.getSwerveModule(3).getAngleMotor().getSelectedSensorPosition(RobotMap.kPIDLoopIdx));*/
 	}
