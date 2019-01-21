@@ -5,14 +5,13 @@ import com.kauailabs.navx.frc.AHRS;
 
 import org.usfirst.frc.team5507.robot.subsystems.Climber;
 import org.usfirst.frc.team5507.robot.subsystems.HatchDelivery;
-import org.usfirst.frc.team5507.robot.subsystems.SwerveDriveModule;
+import org.usfirst.frc.team5507.robot.subsystems.Limelight;
 //import org.usfirst.frc.team5507.robot.subsystems.SwerveDriveModule;
 import org.usfirst.frc.team5507.robot.subsystems.SwerveDriveSubsystem;
 
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
@@ -26,10 +25,12 @@ public class Robot extends TimedRobot {
 	public static final boolean DEBUG = true;
 
 	private static OI mOI;
-	private static SwerveDriveSubsystem swerveDriveSubsystem;
+	public static SwerveDriveSubsystem swerveDriveSubsystem;
 	private Timer timer; 
 	public static Climber m_climber;
 	public static HatchDelivery m_HatchDelivery;
+	public static Limelight m_Limelight;
+	
 
 	public static OI getOI() {
 		return mOI;
@@ -118,6 +119,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
+		
 	}
 
 	@Override
@@ -130,7 +132,6 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-		LiveWindow.run();
 		if(timer.get() < 2) swerveDriveSubsystem.holonomicDrive(0, -0.3 , 0);
 		else if(timer.get() < 3) swerveDriveSubsystem.holonomicDrive(0.3, 0, 0);
 		else if(timer.get() < 5) swerveDriveSubsystem.holonomicDrive(0, 0.3, 0);
