@@ -119,7 +119,7 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
-		
+		m_climber.armOneMove(mOI.getController().getLeftYValue());
 	}
 
 	@Override
