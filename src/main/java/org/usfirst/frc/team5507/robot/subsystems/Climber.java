@@ -12,6 +12,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import org.usfirst.frc.team5507.robot.commands.ClimberStop;
@@ -25,9 +26,13 @@ public class Climber extends Subsystem {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
   private static CANSparkMax arm1 = new CANSparkMax(1, MotorType.kBrushless);
-  private static CANEncoder NEncoder = new CANEncoder(arm1);
-  private static CANPIDController NPidController = new CANPIDController(arm1);
+  private static CANSparkMax arm2 = new CANSparkMax(2, MotorType.kBrushless);
+  private static CANEncoder NEncoder1 = new CANEncoder(arm1);
+  private static CANEncoder NEncoder2 = new CANEncoder(arm2);
+  private static CANPIDController NPidController1 = new CANPIDController(arm1);
+  private static CANPIDController NPidController2 = new CANPIDController(arm2);
 
+  private final double GEARBOX_RATIO = 400; 
   @Override
   public void initDefaultCommand() {
     // Set the default command for a subsystem here.
@@ -35,33 +40,42 @@ public class Climber extends Subsystem {
     setDefaultCommand(new ClimberStop());
   }
   
+  public CANPIDController getPIDControllerArm1()
+  {
+    return NPidController1;
+  }
 
-  /*public void stop() { //when pressed
-    arm1.set(ControlMode.PercentOutput, 0);
-    arm2.set(ControlMode.PercentOutput, 0);
+  public CANPIDController getPIDControllerArm2()
+  {
+    return NPidController2;
+  }
+
+  public void stop() { //when pressed
+    arm1.set(0);
+    arm2.set(0);
   }
 
   public void latch() { //when held
-    arm1.set(ControlMode.PercentOutput, .5);
+    arm1.set(.5);
   }
 
   public void rollUp() { //when held
-    arm1.set(ControlMode.PercentOutput, .3);
-    arm2.set(ControlMode.PercentOutput, .3);
+    arm1.set(.3);
+    arm2.set(.3);
   }
 
   public void pullUpArm2() { //when held
-    arm2.set(ControlMode.PercentOutput, -0.3);
+    arm2.set(-0.3);
   }
 
   public void pullUpArm1() { //when held
-    arm1.set(ControlMode.PercentOutput, -0.3);
-  } */
+    arm1.set(-0.3);
+  } 
    
-  public void armOneMove(double speed) {//up or down
+  public void armOneMove(double speed) {//up or down with joystick
     arm1.set(speed);
   }
-  // kP = 0.2; 
+    // kP = 0.2; 
     // kI = 1e-4;
     // kD = 1; 
     // kIz = 0; 
@@ -69,14 +83,26 @@ public class Climber extends Subsystem {
     // kMaxOutput = 1; 
     // kMinOutput = -1;
 
+  public static void setPID(CANPIDController Controller,double p, double i, double d) //used in RobotInit
+  {
+    Controller.setP(p);
+    Controller.setI(i);
+    Controller.setD(d);
+  }
+
+
   public void armOneZero()
   {
-    
+    NPidController1.setReference(0, ControlType.kPosition);
   }
 
   public void armOneFortyFive()
   {
+   NPidController1.setReference(50, ControlType.kPosition);
+  }
 
+  public void armToDegree(double angle) {
+    NPidController1.setReference((angle/360) * GEARBOX_RATIO, ControlType.kPosition);
   }
 }
 

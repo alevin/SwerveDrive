@@ -8,34 +8,37 @@
 package org.usfirst.frc.team5507.robot.commands;
 
 import org.usfirst.frc.team5507.robot.Robot;
+import org.usfirst.frc.team5507.robot.subsystems.Limelight;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class AutoAlign extends Command {
-  public AutoAlign() {
+public class SwitchLedModes extends Command {
+
+  boolean done;
+  public SwitchLedModes() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
-    requires(Robot.swerveDriveSubsystem);
     requires(Robot.m_Limelight);
-    
   }
 
   // Called just before this Command runs the first time
-  @Override
-  protected void initialize() {
-  }
+  // @Override
+   protected void initialize() {
+    done = false;
+   }
 
   // Called repeatedly when this Command is scheduled to run
   @Override
   protected void execute() {
-    Robot.m_Limelight.align();
-    
+    Robot.m_Limelight.switchModes();
+    done = true;
+   
   }
 
   // Make this return true when this Command no longer needs to run execute()
   @Override
   protected boolean isFinished() {
-    return true;
+    return done;
   }
 
   // Called once after isFinished returns true

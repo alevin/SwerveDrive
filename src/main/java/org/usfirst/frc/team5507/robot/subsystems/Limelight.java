@@ -23,6 +23,7 @@ public class Limelight extends Subsystem {
   // Put methods for controlling this subsystem
   // here. Call these from Commands.
 
+  private static int camMode = 0;
   public static NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
 
   public static NetworkTableEntry tx = table.getEntry("tx");
@@ -44,6 +45,17 @@ public class Limelight extends Subsystem {
     setDefaultCommand(new ShowLimelight());
   }
 
+  public static void switchModes() {
+    if (camMode == 0) {
+      NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(1);
+      camMode = 1;
+    } 
+    else {
+      NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(0);
+      camMode = 0;
+    }
+  }
+
   public void printInfo() {
     // post to smart dashboard periodically
     SmartDashboard.putNumber("LimelightX", limelightx);
@@ -54,19 +66,15 @@ public class Limelight extends Subsystem {
 
   public void align() // method to line us up in the middle of the tape
   {
-    while (limelightx > .5 && limelightx < -.5) {
-      if (limelightx > .5) {
-        System.out.println("turning");
-
-        Robot.swerveDriveSubsystem.holonomicDrive(0, 0, .2);
-      }
-      else if (limelightx < -.5) {
-        System.out.println("turning");
-        Robot.swerveDriveSubsystem.holonomicDrive(0, 0, -.2);
-      }
+    if (Math.abs(limelightx) > .5) {
+      Robot.swerveDriveSubsystem.holonomicDrive(.1, 0, .08 * limelightx);
+    } 
+    else if (limelightarea < .75) {
+      System.out.println("driving straight");
+      Robot.swerveDriveSubsystem.holonomicDrive(.4, 0, 0);
     }
-    while(limelightarea < 10)
-    System.out.println("driving straight");
-    Robot.swerveDriveSubsystem.holonomicDrive(.2, 0, 0);
+     else {
+      Robot.swerveDriveSubsystem.holonomicDrive(0, 0, 0);
+    }
   }
 }

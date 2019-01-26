@@ -29,12 +29,12 @@ public class HatchDelivery extends Subsystem {
   }
 
   public void retractHatch() {
-    solenoid1.set(DoubleSolenoid.Value.kReverse);
-    solenoid2.set(DoubleSolenoid.Value.kReverse);
+    solenoid1.set(DoubleSolenoid.Value.kForward);
+    solenoid2.set(DoubleSolenoid.Value.kForward);
   }
 
   public void placeHatch() {
-    solenoid1.set(DoubleSolenoid.Value.kForward);
-    solenoid2.set(DoubleSolenoid.Value.kForward);
+    solenoid1.set(DoubleSolenoid.Value.kReverse);
+    solenoid2.set(DoubleSolenoid.Value.kReverse);
   }
 }

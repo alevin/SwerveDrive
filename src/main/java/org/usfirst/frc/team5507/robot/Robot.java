@@ -9,6 +9,7 @@ import org.usfirst.frc.team5507.robot.subsystems.Limelight;
 //import org.usfirst.frc.team5507.robot.subsystems.SwerveDriveModule;
 import org.usfirst.frc.team5507.robot.subsystems.SwerveDriveSubsystem;
 
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -23,15 +24,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends TimedRobot {
 	public static final boolean DEBUG = true;
-
-	private static OI mOI;
+	
+	
 	public static SwerveDriveSubsystem swerveDriveSubsystem;
 	private Timer timer; 
 	public static Climber m_climber;
 	public static HatchDelivery m_HatchDelivery;
 	public static Limelight m_Limelight;
+	public Compressor compressor;
 	
-
+	private static OI mOI;
 	public static OI getOI() {
 		return mOI;
 	}
@@ -42,13 +44,17 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void robotInit() {
-		mOI = new OI(this);
-
+		
+		compressor = new Compressor();
 		swerveDriveSubsystem = new SwerveDriveSubsystem();
-
+		m_Limelight = new Limelight();
+		//m_climber = new Climber();
+		m_HatchDelivery = new HatchDelivery();
+		timer = new Timer();	
+		//Climber.setPID(Robot.m_climber.getPIDControllerArm1(), .2 , 1e-4, 1);
+		//Climber.setPID(Robot.m_climber.getPIDControllerArm2(), .2 , 1e-4, 1);
+		mOI = new OI(this);
 		mOI.registerControls();
-
-		timer = new Timer();
 	}
 
 	@Override
@@ -57,6 +63,9 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("Raw Drivetrain Angle", swerveDriveSubsystem.getRawGyroAngle());
 		SmartDashboard.putNumber("Drivetrain Rate", swerveDriveSubsystem.getGyroRate());
 		SmartDashboard.putNumber("Gyro Update Rate", swerveDriveSubsystem.getNavX().getActualUpdateRate());
+
+		
+		
 
 
 		for (int i = 0; i < 4; i++) {
@@ -110,6 +119,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopInit() {
+		compressor.setClosedLoopControl(true);
 
 	}
 
@@ -119,7 +129,8 @@ public class Robot extends TimedRobot {
 	@Override
 	public void teleopPeriodic() {
 		Scheduler.getInstance().run();
-		m_climber.armOneMove(mOI.getController().getLeftYValue());
+		//m_climber.armOneMove(mOI.getController().getLeftYValue());
+		
 	}
 
 	@Override
@@ -132,10 +143,10 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void testPeriodic() {
-		if(timer.get() < 2) swerveDriveSubsystem.holonomicDrive(0, -0.3 , 0);
-		else if(timer.get() < 3) swerveDriveSubsystem.holonomicDrive(0.3, 0, 0);
-		else if(timer.get() < 5) swerveDriveSubsystem.holonomicDrive(0, 0.3, 0);
-		else if(timer.get() < 6) swerveDriveSubsystem.holonomicDrive(-0.3, 0, 0);
+		if(timer.get() < 20) swerveDriveSubsystem.holonomicDrive(.25, 0 , 0);
+		// else if(timer.get() < 3) swerveDriveSubsystem.holonomicDrive(0.3, 0, 0);
+		// else if(timer.get() < 5) swerveDriveSubsystem.holonomicDrive(0, 0.3, 0);
+		// else if(timer.get() < 6) swerveDriveSubsystem.holonomicDrive(-0.3, 0, 0);
 		else {
 			swerveDriveSubsystem.stopDriveMotors();
 			timer.stop();
