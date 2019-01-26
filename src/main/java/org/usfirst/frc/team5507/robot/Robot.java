@@ -10,10 +10,12 @@ import org.usfirst.frc.team5507.robot.subsystems.Limelight;
 import org.usfirst.frc.team5507.robot.subsystems.SwerveDriveSubsystem;
 
 import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.SPI;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -32,6 +34,7 @@ public class Robot extends TimedRobot {
 	public static HatchDelivery m_HatchDelivery;
 	public static Limelight m_Limelight;
 	public Compressor compressor;
+	public AHRS m_ahrs;
 	
 	private static OI mOI;
 	public static OI getOI() {
@@ -55,6 +58,7 @@ public class Robot extends TimedRobot {
 		//Climber.setPID(Robot.m_climber.getPIDControllerArm2(), .2 , 1e-4, 1);
 		mOI = new OI(this);
 		mOI.registerControls();
+		swerveDriveSubsystem.zeroGyro();
 	}
 
 	@Override
@@ -63,11 +67,6 @@ public class Robot extends TimedRobot {
 		SmartDashboard.putNumber("Raw Drivetrain Angle", swerveDriveSubsystem.getRawGyroAngle());
 		SmartDashboard.putNumber("Drivetrain Rate", swerveDriveSubsystem.getGyroRate());
 		SmartDashboard.putNumber("Gyro Update Rate", swerveDriveSubsystem.getNavX().getActualUpdateRate());
-
-		
-		
-
-
 		for (int i = 0; i < 4; i++) {
 			SmartDashboard.putNumber("Drive Current Draw " + i, swerveDriveSubsystem.getSwerveModule(i).getDriveMotor().getOutputCurrent());
 			SmartDashboard.putNumber("Angle Current Draw " + i, swerveDriveSubsystem.getSwerveModule(i).getAngleMotor().getOutputCurrent());

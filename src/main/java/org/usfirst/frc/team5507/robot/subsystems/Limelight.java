@@ -31,9 +31,15 @@ public class Limelight extends Subsystem {
   public static NetworkTableEntry ta = table.getEntry("ta");
 
   // read values periodically
-  public static double limelightx = tx.getDouble(0.0);
-  public static double limelighty = ty.getDouble(0.0);
-  public static double limelightarea = ta.getDouble(0.0);
+  public static double limelightx;
+  public static double limelighty;
+  public static double limelightarea;
+  public static double angleErr;
+  private double kP = .05;
+  private double kI = .001;
+  private double kD = 0;
+  private double xErr = 0;
+  private double xIErr = 0;
 
   public static final double WIDTH = 320;
   public static final double HEIGHT = 240;
@@ -61,20 +67,34 @@ public class Limelight extends Subsystem {
     SmartDashboard.putNumber("LimelightX", limelightx);
     SmartDashboard.putNumber("LimelightY", limelighty);
     SmartDashboard.putNumber("LimelightArea", limelightarea);
-
+    SmartDashboard.putNumber("Gyro Angle", (Robot.swerveDriveSubsystem.getGyroAngle()));
   }
 
   public void align() // method to line us up in the middle of the tape
   {
+    limelightx = tx.getDouble(0.3);
+    limelighty = ty.getDouble(0.3);
+    limelightarea = ta.getDouble(0.3);
+    angleErr = 0 - (Robot.swerveDriveSubsystem.getGyroAngle() % 360);
+    double rotation = 0;
+    double strafe = 0;
+
+    xErr = 0 - limelightx;
+    xIErr = xIErr + (xErr)*.02;
+    
+
     if (Math.abs(limelightx) > .5) {
-      Robot.swerveDriveSubsystem.holonomicDrive(.1, 0, .08 * limelightx);
-    } 
-    else if (limelightarea < .75) {
-      System.out.println("driving straight");
-      Robot.swerveDriveSubsystem.holonomicDrive(.4, 0, 0);
+      //strafe = 0.12 * limelightx;
+      strafe = kP*xErr + kI*xIErr;
+      // double a = limelightx;
+      // System.out.println(a);
     }
-     else {
-      Robot.swerveDriveSubsystem.holonomicDrive(0, 0, 0);
+    if(Math.abs(angleErr) > .5) {
+      rotation = .01 * angleErr;
+      System.out.println(angleErr);
     }
+
+    Robot.swerveDriveSubsystem.holonomicDrive(.3, -strafe, rotation); //forward: .3 * (1/limelightarea)
+
   }
 }
