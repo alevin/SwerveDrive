@@ -7,6 +7,8 @@
 
 package org.usfirst.frc.team5507.robot.subsystems;
 
+import java.util.ArrayList;
+
 import org.usfirst.frc.team5507.robot.Robot;
 import org.usfirst.frc.team5507.robot.commands.ShowLimelight;
 
@@ -29,17 +31,20 @@ public class Limelight extends Subsystem {
   public static NetworkTableEntry tx = table.getEntry("tx");
   public static NetworkTableEntry ty = table.getEntry("ty");
   public static NetworkTableEntry ta = table.getEntry("ta");
+  public static NetworkTableEntry tv = table.getEntry("tv");
 
   // read values periodically
   public static double limelightx;
   public static double limelighty;
   public static double limelightarea;
   public static double angleErr;
-  private double kP = .05;
+  public static boolean isView;
+  private double kP = .06;
   private double kI = .001;
-  private double kD = 0;
+  private double kD = 0.0005;
   private double xErr = 0;
   private double xIErr = 0;
+  private ArrayList<Double> prevX = new ArrayList<Double>(); 
 
   public static final double WIDTH = 320;
   public static final double HEIGHT = 240;
@@ -51,7 +56,7 @@ public class Limelight extends Subsystem {
     setDefaultCommand(new ShowLimelight());
   }
 
-  public static void switchModes() {
+  public  void switchModes() {
     if (camMode == 0) {
       NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(1);
       camMode = 1;
@@ -67,20 +72,27 @@ public class Limelight extends Subsystem {
     SmartDashboard.putNumber("LimelightX", limelightx);
     SmartDashboard.putNumber("LimelightY", limelighty);
     SmartDashboard.putNumber("LimelightArea", limelightarea);
+    SmartDashboard.putBoolean("Is in view", isView);
     SmartDashboard.putNumber("Gyro Angle", (Robot.swerveDriveSubsystem.getGyroAngle()));
   }
 
-  public void align() // method to line us up in the middle of the tape
+  public void align() //check the values on limelight
   {
     limelightx = tx.getDouble(0.3);
     limelighty = ty.getDouble(0.3);
     limelightarea = ta.getDouble(0.3);
-    angleErr = 0 - (Robot.swerveDriveSubsystem.getGyroAngle() % 360);
+    isView = tv.getBoolean(true);
+    angleErr = 0 - (Robot.swerveDriveSubsystem.getGyroAngle() % 180);
     double rotation = 0;
     double strafe = 0;
+    prevX.add(angleErr);
+    double dx = 0;
+    if(prevX.size() > 2) dx = (prevX.get(prevX.size()-1) - prevX.get(prevX.size()-2))/.02;
+    System.out.println("DX : " + dx);
+    
 
     xErr = 0 - limelightx;
-    xIErr = xIErr + (xErr)*.02;
+    xIErr += (xErr)*.02;
     
 
     if (Math.abs(limelightx) > .5) {
@@ -90,11 +102,15 @@ public class Limelight extends Subsystem {
       // System.out.println(a);
     }
     if(Math.abs(angleErr) > .5) {
-      rotation = .01 * angleErr;
+      rotation = (.003 * angleErr) + (dx * kD);
       System.out.println(angleErr);
     }
-
-    Robot.swerveDriveSubsystem.holonomicDrive(.3, -strafe, rotation); //forward: .3 * (1/limelightarea)
-
+    if(limelightarea > 25) {
+      rotation = 0;
+      strafe = 0;
+    }
+    if(isView) Robot.swerveDriveSubsystem.holonomicDrive(.225, -strafe, rotation); //forward: .3 * (1/limelightarea)
+    else Robot.swerveDriveSubsystem.holonomicDrive(.225, -strafe, 0);
+    
   }
 }

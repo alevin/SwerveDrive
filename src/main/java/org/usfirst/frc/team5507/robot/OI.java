@@ -35,6 +35,7 @@ public class OI {
 		mController.getAButton().whenPressed(new RetractHatch());
 		mController.getXButton().whileHeld(new AutoAlign());
 		mController.getYButton().whenPressed(new ZeroNavX());
+		mController.getLeftBumperButton().whenPressed(new SwitchLedModes());
 		//mController.getStartButton().whenPressed(new ToggleFieldOrientedCommand(mRobot.getDrivetrain()));
 		//mController.getDPadButton(DPadButton.Direction.LEFT).whenPressed(new AdjustFieldOrientedAngleCommand(mRobot.getDrivetrain(), false));
 		//mController.getDPadButton(DPadButton.Direction.RIGHT).whenPressed(new AdjustFieldOrientedAngleCommand(mRobot.getDrivetrain(), true));
