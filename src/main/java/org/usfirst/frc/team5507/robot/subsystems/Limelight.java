@@ -89,11 +89,9 @@ public class Limelight extends Subsystem {
     double dx = 0;
     if(prevX.size() > 2) dx = (prevX.get(prevX.size()-1) - prevX.get(prevX.size()-2))/.02;
     System.out.println("DX : " + dx);
-    
 
     xErr = 0 - limelightx;
     xIErr += (xErr)*.02;
-    
 
     if (Math.abs(limelightx) > .5) {
       //strafe = 0.12 * limelightx;
