@@ -7,12 +7,15 @@
 
 package org.usfirst.frc.team5507.robot.commands;
 
+import org.usfirst.frc.team5507.robot.Robot;
+
 import edu.wpi.first.wpilibj.command.Command;
 
 public class DriveDistance extends Command {
   public DriveDistance() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
+    requires(Robot.swerveDriveSubsystem);
   }
 
   // Called just before this Command runs the first time
