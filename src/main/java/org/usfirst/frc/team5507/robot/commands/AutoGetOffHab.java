@@ -9,8 +9,8 @@ package org.usfirst.frc.team5507.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 
-public class DriveDistance extends Command {
-  public DriveDistance() {
+public class AutoGetOffHab extends Command {
+  public AutoGetOffHab() {
     // Use requires() here to declare subsystem dependencies
     // eg. requires(chassis);
   }
