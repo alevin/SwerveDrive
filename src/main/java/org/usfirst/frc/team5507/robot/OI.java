@@ -9,6 +9,7 @@ import org.usfirst.frc.team5507.robot.commands.RetractHatch;
 import org.usfirst.frc.team5507.robot.commands.SwitchLedModes;
 import org.usfirst.frc.team5507.robot.commands.ToggleFieldOrientedCommand;
 import org.usfirst.frc.team5507.robot.commands.ZeroNavX;
+import org.usfirst.frc.team5507.robot.commands.resetHappy;
 import org.usfirst.frc.team5507.robot.input.DPadButton;
 import org.usfirst.frc.team5507.robot.input.IGamepad;
 import org.usfirst.frc.team5507.robot.input.XboxGamepad;
@@ -36,6 +37,7 @@ public class OI {
 		mController.getXButton().whileHeld(new AutoAlign());
 		mController.getYButton().whenPressed(new ZeroNavX());
 		mController.getLeftBumperButton().whenPressed(new SwitchLedModes());
+		mController.getStartButton().whenPressed(new resetHappy());
 		//mController.getStartButton().whenPressed(new ToggleFieldOrientedCommand(mRobot.getDrivetrain()));
 		//mController.getDPadButton(DPadButton.Direction.LEFT).whenPressed(new AdjustFieldOrientedAngleCommand(mRobot.getDrivetrain(), false));
 		//mController.getDPadButton(DPadButton.Direction.RIGHT).whenPressed(new AdjustFieldOrientedAngleCommand(mRobot.getDrivetrain(), true));
