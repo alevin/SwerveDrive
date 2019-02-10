@@ -162,6 +162,7 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void testPeriodic() {
+		if(timer.get() < 3) swerveDriveSubsystem.holonomicDrive(.3, 0, 0);
 		/*if(timer.get() < 3) swerveDriveSubsystem.holonomicDrive(.05, 0 , 0); //2.33 ft/s at 0.5 speed
 		else if(timer.get() < 6) swerveDriveSubsystem.holonomicDrive(0.10, 0, 0);
 		else if(timer.get() < 9) swerveDriveSubsystem.holonomicDrive(0.15, 0, 0);

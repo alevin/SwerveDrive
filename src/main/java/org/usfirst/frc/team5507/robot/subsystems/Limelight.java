@@ -47,6 +47,7 @@ public class Limelight extends Subsystem {
   private double xIErr = 0;
   private double rIErr = 0;
   private boolean happy = false;
+  private double xOffset = 1;
   private ArrayList<Double> prevX = new ArrayList<Double>(); 
 
   public static final double WIDTH = 320;
@@ -59,6 +60,12 @@ public class Limelight extends Subsystem {
     setDefaultCommand(new ShowLimelight());
   }
 
+  public void resetHappy()
+  {
+    happy = false;
+    xIErr = 0;
+    rIErr = 0;
+  }
   public  void switchModes() {
     if (camMode == 0) {
       NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(1);
@@ -82,6 +89,7 @@ public class Limelight extends Subsystem {
   public void align() //check the values on limelight
   {
     limelightx = tx.getDouble(0.3);
+    limelightx += xOffset;
     limelighty = ty.getDouble(0.3);
     limelightarea = ta.getDouble(0.3);
     isView = tv.getBoolean(true);
@@ -110,22 +118,22 @@ public class Limelight extends Subsystem {
     
     if (Math.abs(limelightx) > .5) {
       strafe = kP*xErr + kI*xIErr;
-      forward = 0.35;
+      
     }
-    if(Math.abs(angleErr) > .5 && Math.abs(limelightx) < 15) {
+    if(Math.abs(angleErr) > 1.5 && Math.abs(limelightx) < 15) {
       rotation = (.0025 * angleErr) + (dx * kD) + rIErr*rI;
       System.out.println(angleErr);
       forward = 0.35;
     }
+    forward = 0.35; // goes forward until area > 20
     if(limelightarea > 20) {
-      forward = 0;
-      if(Math.abs(angleErr) < 0.5 && Math.abs(limelightx) < .5) {
+      forward = 0;  
+      if(Math.abs(angleErr) < 1.5 && Math.abs(limelightx) < 1.5) {
         happy = true;
       }
     }
     if(happy) {
       strafe = 0;
-      rotation = 0;
       forward = 0.35;
     }
     if(isView) Robot.swerveDriveSubsystem.holonomicDrive(forward, -strafe, rotation); //forward: .3 * (1/limelightarea)

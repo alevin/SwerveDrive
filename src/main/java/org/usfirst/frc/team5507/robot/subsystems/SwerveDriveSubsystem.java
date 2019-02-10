@@ -91,8 +91,8 @@ public class SwerveDriveSubsystem extends HolonomicDrivetrain {
 
 		double[] speeds = new double[]{
 				Math.sqrt(b * b + c * c),
-				Math.sqrt(b * b + d * d),
-				Math.sqrt(a * a + d * d),
+				Math.sqrt(b * b + d * d) ,
+				Math.sqrt(a * a + d * d) ,
 				Math.sqrt(a * a + c * c)
 		};
 
