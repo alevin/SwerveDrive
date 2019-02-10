@@ -16,6 +16,7 @@ import org.usfirst.frc.team5507.robot.input.XboxGamepad;
 import org.usfirst.frc.team5507.robot.subsystems.HolonomicDrivetrain;
 
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 /**
  * This class is the glue that binds the controls on the physical operator
@@ -34,7 +35,7 @@ public class OI {
 		//mController.getAButton().whenPressed(new ResetDrivetrainEncoderCommand(mRobot.getDrivetrain()));
 		mController.getBButton().whenPressed(new PlaceHatch());
 		mController.getAButton().whenPressed(new RetractHatch());
-		mController.getXButton().whileHeld(new AutoAlign());
+		mController.getXButton().whileHeld(new AutoAlign(Robot.targetPos));
 		mController.getYButton().whenPressed(new ZeroNavX());
 		mController.getLeftBumperButton().whenPressed(new SwitchLedModes());
 		mController.getStartButton().whenPressed(new resetHappy());

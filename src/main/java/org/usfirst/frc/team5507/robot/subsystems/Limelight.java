@@ -50,6 +50,7 @@ public class Limelight extends Subsystem {
   private double xOffset = 1;
   private ArrayList<Double> prevX = new ArrayList<Double>(); 
 
+
   public static final double WIDTH = 320;
   public static final double HEIGHT = 240;
 
@@ -86,14 +87,15 @@ public class Limelight extends Subsystem {
     SmartDashboard.putNumber("Gyro Angle", (Robot.swerveDriveSubsystem.getGyroAngle()));
   }
 
-  public void align() //check the values on limelight
+  public void align(double targetPos) //check the values on limelight
   {
+    Robot.swerveDriveSubsystem.setIsAuto(true); 
     limelightx = tx.getDouble(0.3);
     limelightx += xOffset;
     limelighty = ty.getDouble(0.3);
     limelightarea = ta.getDouble(0.3);
     isView = tv.getBoolean(true);
-    angleErr = 0 - (Robot.swerveDriveSubsystem.getGyroAngle() % 180);
+    angleErr = targetPos - (Robot.swerveDriveSubsystem.getGyroAngle() % 360);
     double rotation = 0;
     double strafe = 0;
     double forward = 0;
