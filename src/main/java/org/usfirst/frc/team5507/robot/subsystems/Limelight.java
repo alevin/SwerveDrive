@@ -50,7 +50,7 @@ public class Limelight extends Subsystem {
   private boolean happy = false;
   private double xOffset = 1;
   private double rotation = 0;
-  private double strafe = 0;
+  private double strafe = 0.35;
   private double forward = 0;
   private ArrayList<Double> prevX = new ArrayList<Double>(); 
   public static final double WIDTH = 320;
@@ -143,8 +143,6 @@ public class Limelight extends Subsystem {
     limelighty = ty.getDouble(0.3);
     limelightarea = ta.getDouble(0.3);
     isView = tv.getBoolean(true);
-    dx = 0;
-    forward = 0.35; // goes forward until area > 20
     prevX.add(getAngleErr(targetAngle));
 
     if(prevX.size() > 2) {
