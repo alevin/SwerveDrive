@@ -49,8 +49,6 @@ public class Limelight extends Subsystem {
   private boolean happy = false;
   private double xOffset = 1;
   private ArrayList<Double> prevX = new ArrayList<Double>(); 
-
-
   public static final double WIDTH = 320;
   public static final double HEIGHT = 240;
 
@@ -67,6 +65,7 @@ public class Limelight extends Subsystem {
     xIErr = 0;
     rIErr = 0;
   }
+  
   public  void switchModes() {
     if (camMode == 0) {
       NetworkTableInstance.getDefault().getTable("limelight").getEntry("camMode").setNumber(1);
