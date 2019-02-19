@@ -17,30 +17,29 @@ public class SwerveDriveSubsystem extends HolonomicDrivetrain {
 	 * 2 is Back Left
 	 * 3 is Back Right
 	 */
-	private SwerveDriveModule[] mSwerveModules = new SwerveDriveModule[] {
-		new SwerveDriveModule(0, new TalonSRX(5), new TalonSRX(6), 294.609),
-		new SwerveDriveModule(1, new TalonSRX(2), new TalonSRX(4), 39.023), 
-		new SwerveDriveModule(2, new TalonSRX(1), new TalonSRX(3), 302.6953125),
-		new SwerveDriveModule(3, new TalonSRX(7), new TalonSRX(8), 164.531)
+	private SwerveDriveModule[] mSwerveModules = new SwerveDriveModule[] {                            //   1/23/19
+		new SwerveDriveModule(0, new TalonSRX(5), new TalonSRX(6), 238.609), //204.609 + 10   				209.609
+		new SwerveDriveModule(1, new TalonSRX(2), new TalonSRX(4), 234.023), // 219.023 + 5					234.023
+		new SwerveDriveModule(2, new TalonSRX(1), new TalonSRX(3), 20.6953125), //12.6953125 +25			37.69531
+		new SwerveDriveModule(3, new TalonSRX(7), new TalonSRX(8), 106.531) // 164.531 new: 94.531 + 10		99.531
 	};
 
 	private AHRS mNavX = new AHRS(SPI.Port.kMXP, (byte) 200);
 
 	public SwerveDriveSubsystem() {
-		zeroGyro();
+		zeroGyro(); 
 
-		mSwerveModules[0].getDriveMotor().setInverted(false);
-		mSwerveModules[1].getDriveMotor().setInverted(true);
+		mSwerveModules[0].getDriveMotor().setInverted(false); // Doesnt Work!!
+		mSwerveModules[1].getDriveMotor().setInverted(false);
 		mSwerveModules[2].getDriveMotor().setInverted(false);
-		mSwerveModules[3].getDriveMotor().setInverted(true);
+		mSwerveModules[3].getDriveMotor().setInverted(false);
 
-		mSwerveModules[0].getAngleMotor().setInverted(true);
+		mSwerveModules[0].getAngleMotor().setInverted(true); // no clue if it works.
 		mSwerveModules[2].getAngleMotor().setInverted(true);
-	
+		mSwerveModules[1].getAngleMotor().setInverted(true);
+		mSwerveModules[3].getAngleMotor().setInverted(true);
 
-//		for (SwerveDriveModule module : mSwerveModules) {
-//			module.setTargetAngle(0);
-//		}
+		mSwerveModules[0].zeroDistance();
 	}
 
 	public AHRS getNavX() {
@@ -65,6 +64,9 @@ public class SwerveDriveSubsystem extends HolonomicDrivetrain {
 
 	@Override
 	public void holonomicDrive(double forward, double strafe, double rotation) {
+		// System.out.println("Forward: " + forward);
+		// System.out.println("Strafe: " + strafe);
+		// System.out.println("Rotation: " + rotation);
 		forward *= getSpeedMultiplier();
 		strafe *= getSpeedMultiplier();
 		if (isFieldOriented()) {
@@ -89,8 +91,8 @@ public class SwerveDriveSubsystem extends HolonomicDrivetrain {
 
 		double[] speeds = new double[]{
 				Math.sqrt(b * b + c * c),
-				Math.sqrt(b * b + d * d),
-				Math.sqrt(a * a + d * d),
+				Math.sqrt(b * b + d * d) ,
+				Math.sqrt(a * a + d * d) ,
 				Math.sqrt(a * a + c * c)
 		};
 

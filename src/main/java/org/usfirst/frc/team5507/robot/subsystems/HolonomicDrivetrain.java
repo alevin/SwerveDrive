@@ -2,13 +2,22 @@ package org.usfirst.frc.team5507.robot.subsystems;
 
 import org.usfirst.frc.team5507.robot.commands.HolonomicDriveCommand;
 
-import edu.wpi.first.wpilibj.command.Subsystem;
+ 
 
 public abstract class HolonomicDrivetrain extends Drivetrain {
 
 	private double mAdjustmentAngle = 0;
 	private boolean mFieldOriented = true;
+	private boolean isAuto = false;
 
+	public boolean getIsAuto()
+	{
+		return isAuto;
+	}
+	public void setIsAuto(boolean is)
+	{
+		isAuto = is;
+	}
 
 	public double getAdjustmentAngle() {
 		return mAdjustmentAngle;

@@ -3,13 +3,22 @@ package org.usfirst.frc.team5507.robot;
 
 import com.kauailabs.navx.frc.AHRS;
 
+import org.usfirst.frc.team5507.robot.commands.AutoAlign;
+import org.usfirst.frc.team5507.robot.subsystems.Climber;
+import org.usfirst.frc.team5507.robot.subsystems.HatchDelivery;
+import org.usfirst.frc.team5507.robot.subsystems.Limelight;
 //import org.usfirst.frc.team5507.robot.subsystems.SwerveDriveModule;
 import org.usfirst.frc.team5507.robot.subsystems.SwerveDriveSubsystem;
 
+import edu.wpi.first.wpilibj.Compressor;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.livewindow.LiveWindow;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.SPI;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -20,9 +29,36 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
  */
 public class Robot extends TimedRobot {
 	public static final boolean DEBUG = true;
-
+	
+	
+	public static SwerveDriveSubsystem swerveDriveSubsystem;
+	private Timer timer; 
+	public static Climber m_climber;
+	public static HatchDelivery m_HatchDelivery;
+	public static Limelight m_Limelight;
+	public Compressor compressor;
+	public AHRS m_ahrs;
+	public static Command m_autoCommand;
+	SendableChooser<Integer> m_chooser = new SendableChooser<Integer>();
+	SendableChooser<Integer> m_alignChooser = new SendableChooser<Integer>();
+	public static AutoAlign m_align;
 	private static OI mOI;
-	private static SwerveDriveSubsystem swerveDriveSubsystem;
+	public static double targetPos;
+
+	//Auto system
+	private static final int START_DEFAULT = 0;
+	private static final int START_RIGHT_2 = 1;
+	private static final int START_LEFT_2 = 2;
+	private static final int START_RIGHT_1 = 3;
+	private static final int START_CENTER_1 = 4;
+	private static final int START_LEFT_1 = 5;
+
+	private static final int FRONT_CARGO = 0;
+	private static final int LEFT_CARGO = -90;
+	private static final int LEFT_ROCKET = -61; // CHANGE
+	private static final int RIGHT_CARGO = 90;
+	private static final int RIGHT_ROCKET = 61;
+	private static final int LOADING_STATION = 180;
 
 	public static OI getOI() {
 		return mOI;
@@ -34,31 +70,79 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void robotInit() {
-		mOI = new OI(this);
-
+		
+		compressor = new Compressor();
 		swerveDriveSubsystem = new SwerveDriveSubsystem();
-
+		m_Limelight = new Limelight();
+		//m_climber = new Climber();
+		m_HatchDelivery = new HatchDelivery();
+		timer = new Timer();	
+		//Climber.setPID(Robot.m_climber.getPIDControllerArm1(), .2 , 1e-4, 1);
+		//Climber.setPID(Robot.m_climber.getPIDControllerArm2(), .2 , 1e-4, 1);
+		mOI = new OI(this);
 		mOI.registerControls();
+		swerveDriveSubsystem.zeroGyro();
+		m_alignChooser.setDefaultOption("Front Cargo Bay (Zero) ", FRONT_CARGO);
+		m_alignChooser.addOption("Left Cargo Bay ", LEFT_CARGO );
+		m_alignChooser.addOption("Left Rocket ", LEFT_ROCKET);
+		m_alignChooser.addOption("Right Cargo Bay ", RIGHT_CARGO);
+		m_alignChooser.addOption("Right Rocket ", RIGHT_ROCKET);
+		m_alignChooser.addOption("Loading Station ", LOADING_STATION);
 
+
+		m_chooser.setDefaultOption("Get off hab zone", START_DEFAULT);
+		m_chooser.addOption("Starting level 2 right", START_RIGHT_2);
+		m_chooser.addOption("Starting level 2 left", START_LEFT_2);
+		m_chooser.addOption("Starting level 1 right", START_RIGHT_1);
+		m_chooser.addOption("Starting level 1 center", START_CENTER_1);
+		m_chooser.addOption("Starting level 1 left", START_LEFT_1);
+
+		SmartDashboard.putData("Align Chooser", m_alignChooser);
 		
 	}
 
 	@Override
 	public void robotPeriodic() {
+		if(!(getOI().getController().getXButton().get())) swerveDriveSubsystem.setIsAuto(false);
+
+		
 		SmartDashboard.putNumber("Adjusted Drivetrain Angle", swerveDriveSubsystem.getGyroAngle());
 		SmartDashboard.putNumber("Raw Drivetrain Angle", swerveDriveSubsystem.getRawGyroAngle());
 		SmartDashboard.putNumber("Drivetrain Rate", swerveDriveSubsystem.getGyroRate());
 		SmartDashboard.putNumber("Gyro Update Rate", swerveDriveSubsystem.getNavX().getActualUpdateRate());
-
-
+		
 		for (int i = 0; i < 4; i++) {
 			SmartDashboard.putNumber("Drive Current Draw " + i, swerveDriveSubsystem.getSwerveModule(i).getDriveMotor().getOutputCurrent());
 			SmartDashboard.putNumber("Angle Current Draw " + i, swerveDriveSubsystem.getSwerveModule(i).getAngleMotor().getOutputCurrent());
-			System.out.println("Module " + i  + ": " + swerveDriveSubsystem.getSwerveModule(i).getCurrentAngle());
+			//System.out.println("Module " + i  + ": " + swerveDriveSubsystem.getSwerveModule(i).getCurrentAngle());
 		}
-		//System.out.println("Module 2: " + swerveDriveSubsystem.getSwerveModule(0).getCurrentAngle());
-		
-		
+	//System.out.println("Module 2: " + swerveDriveSubsystem.getSwerveModule(2).getAngleMotor().getOutputCurrent());
+		m_align = new AutoAlign(FRONT_CARGO);
+		targetPos = FRONT_CARGO;
+		switch(m_alignChooser.getSelected())
+		{
+			case LEFT_CARGO: 
+				m_align = new AutoAlign(LEFT_CARGO);
+				targetPos = LEFT_CARGO;
+				break;
+			case LEFT_ROCKET: 
+				m_align = new AutoAlign(LEFT_ROCKET);
+				targetPos = LEFT_ROCKET;
+				break;	
+			case RIGHT_CARGO: 
+				m_align = new AutoAlign(RIGHT_CARGO);
+				targetPos = RIGHT_CARGO;
+				break;	
+			case RIGHT_ROCKET: 
+				m_align = new AutoAlign(RIGHT_ROCKET);
+				targetPos = RIGHT_ROCKET;
+				break;	
+			case LOADING_STATION: 
+				m_align = new AutoAlign(LOADING_STATION);
+				targetPos = LOADING_STATION;
+				break;				
+		}
+	
 	}
 
 	/**
@@ -91,6 +175,8 @@ public class Robot extends TimedRobot {
 	 */
 	@Override
 	public void autonomousInit() {
+		SmartDashboard.putData("Auto Chooser", m_chooser);
+		//m_autoCommand = new 
 	}
 
 	/**
@@ -103,6 +189,7 @@ public class Robot extends TimedRobot {
 
 	@Override
 	public void teleopInit() {
+		compressor.setClosedLoopControl(true);
 
 	}
 
@@ -114,15 +201,36 @@ public class Robot extends TimedRobot {
 		Scheduler.getInstance().run();
 	}
 
+	@Override
+	public void testInit() {
+		timer.reset();
+		timer.start();
+	}
 	/**
 	 * This function is called periodically during test mode
 	 */
 	@Override
 	public void testPeriodic() {
-		LiveWindow.run();
+		if(timer.get() < 3) swerveDriveSubsystem.holonomicDrive(.3, 0, 0);
+		/*if(timer.get() < 3) swerveDriveSubsystem.holonomicDrive(.05, 0 , 0); //2.33 ft/s at 0.5 speed
+		else if(timer.get() < 6) swerveDriveSubsystem.holonomicDrive(0.10, 0, 0);
+		else if(timer.get() < 9) swerveDriveSubsystem.holonomicDrive(0.15, 0, 0);
+		else if(timer.get() < 12) swerveDriveSubsystem.holonomicDrive(.2, 0, 0);
+		else if(timer.get() < 15) swerveDriveSubsystem.holonomicDrive(0.3, 0, 0);
+		else {
+			swerveDriveSubsystem.stopDriveMotors();
+			timer.stop();
+		} */
 		
-		System.out.println("Module 0 = " + swerveDriveSubsystem.getSwerveModule(0).getAngleMotor().getSelectedSensorPosition(RobotMap.kPIDLoopIdx));
-		System.out.println("Module 3 = " + swerveDriveSubsystem.getSwerveModule(3).getAngleMotor().getSelectedSensorPosition(RobotMap.kPIDLoopIdx));
+		if(timer.get() < 3) swerveDriveSubsystem.holonomicDrive(0.4, 0 , 0);
+
+		for(int i = 0; i < 4; i++) {
+			System.out.println("Module " + i + ": " + swerveDriveSubsystem.getSwerveModule(i).getDriveMotor().getMotorOutputPercent());
+		}
+		
+
+		/*System.out.println("Module 0 = " + swerveDriveSubsystem.getSwerveModule(0).getAngleMotor().getSelectedSensorPosition(RobotMap.kPIDLoopIdx));
+		System.out.println("Module 3 = " + swerveDriveSubsystem.getSwerveModule(3).getAngleMotor().getSelectedSensorPosition(RobotMap.kPIDLoopIdx));*/
 	}
 
 	public SwerveDriveSubsystem getDrivetrain() {

@@ -16,7 +16,6 @@ public class SwerveModuleCommand extends Command {
 
 	@Override
 	protected void execute() {
-		// TODO: Handle smart swerve drive angling.
 	}
 
 	@Override
